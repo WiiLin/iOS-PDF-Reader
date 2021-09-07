@@ -7,6 +7,12 @@
 
 import UIKit
 
+public protocol PDFViewControllerDelegate: AnyObject {
+    /// User has tapped on thumbnail
+    func controller(_ controller: PDFViewController, didMoveToPage page: Int)
+}
+
+
 extension PDFViewController {
     /// Initializes a new `PDFViewController`
     ///
@@ -64,6 +70,8 @@ public final class PDFViewController: UIViewController {
         case customAction(() -> ())
     }
     
+    public weak var delegate: PDFViewControllerDelegate?
+    
     /// Collection veiw where all the pdf pages are rendered
     @IBOutlet public var collectionView: UICollectionView!
     
@@ -85,7 +93,11 @@ public final class PDFViewController: UIViewController {
     private var actionButtonImage: UIImage?
     
     /// Current page being displayed
-    private var currentPageIndex: Int = 0
+    private var currentPageIndex: Int = 0 {
+        didSet {
+            delegate?.controller(self, didMoveToPage: currentPageIndex)
+        }
+    }
     
     /// Bottom thumbnail controller
     private var thumbnailCollectionController: PDFThumbnailCollectionViewController?
